@@ -1,0 +1,28 @@
+p2_main.c: In function ‘main’:
+p2_main.c:17:9: warning: implicit declaration of function ‘srand’ [-Wimplicit-function-declaration]
+   17 |         srand(rank+3);
+      |         ^~~~~
+p2_main.c:19:26: warning: implicit declaration of function ‘rand’ [-Wimplicit-function-declaration]
+   19 |         local_array[i] = rand() % 100;
+      |                          ^~~~
+p2_main.c:23:9: warning: implicit declaration of function ‘MY_Global_Max_Loc’ [-Wimplicit-function-declaration]
+   23 |         MY_Global_Max_Loc(local_array, N, MPI_INT, MPI_COMM_WORLD);
+      |         ^~~~~~~~~~~~~~~~~
+p2_main.c:42:17: warning: implicit declaration of function ‘print_int_vector’ [-Wimplicit-function-declaration]
+   42 |                 print_int_vector(maxloc_array, N);
+      |                 ^~~~~~~~~~~~~~~~
+p2_main.c: At top level:
+p2_main.c:50:6: warning: conflicting types for ‘MY_Global_Max_Loc’; have ‘void(int *, int,  MPI_Datatype,  MPI_Comm)’ {aka ‘void(int *, int,  int,  int)’}
+   50 | void MY_Global_Max_Loc(int data[], int count, MPI_Datatype datatype, MPI_Comm communicator){
+      |      ^~~~~~~~~~~~~~~~~
+p2_main.c:23:9: note: previous implicit declaration of ‘MY_Global_Max_Loc’ with type ‘void(int *, int,  MPI_Datatype,  MPI_Comm)’ {aka ‘void(int *, int,  int,  int)’}
+   23 |         MY_Global_Max_Loc(local_array, N, MPI_INT, MPI_COMM_WORLD);
+      |         ^~~~~~~~~~~~~~~~~
+p2_main.c:139:6: warning: conflicting types for ‘print_int_vector’; have ‘void(int *, int)’
+  139 | void print_int_vector(int* v, int N){
+      |      ^~~~~~~~~~~~~~~~
+p2_main.c:42:17: note: previous implicit declaration of ‘print_int_vector’ with type ‘void(int *, int)’
+   42 |                 print_int_vector(maxloc_array, N);
+      |                 ^~~~~~~~~~~~~~~~
+MY max_loc array is: [15 4 4 10 13 15 26 23 ]
+The max_loc array given by MPI_reduce is: [15 4 4 10 13 15 26 23 ]

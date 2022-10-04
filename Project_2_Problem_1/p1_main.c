@@ -10,13 +10,14 @@ int main(int argc, char *argv[]){
 	// size = number of total processors
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	
+	
 	// init variables for performance measures
 	double time_MY_bcast_oneToAll = 0;
 	double time_MPI_bcast = 0;
 	double time_MY_bcast_binomialTree = 0;
 	double global_MY_bcast_oneToAll, global_MPI_bcast, global_MY_bcast_binomialTree;
 	///////////////////// Change Data Size here ////////////////////////////////
-	int N = pow(2, 14);  // data size
+	int N = pow(2, 12);  // data size
 	float data[N]; // init an array of all zeros, size N
 	int trials = 10;
 	
@@ -78,19 +79,21 @@ void MY_bcast_oneToAll(void* data, int count, MPI_Datatype datatype, int root,
 	int rank, size;
 	MPI_Comm_rank(communicator, &rank);
 	MPI_Comm_size(communicator, &size);
-
+	MPI_Status status;
+    MPI_Request request = MPI_REQUEST_NULL;
   	if (rank == root) {
 	// send data from root to all other processors
 	    int i;
 	    for (i = 0; i < size; i++) {
 	      if (i != rank) {
-	        MPI_Send(data, count, datatype, i, 0, communicator);
+	        MPI_Isend(data, count, datatype, i, 0, communicator, &request);
 	      }
 	    }
     } else {
     // receive data from the root
-    MPI_Recv(data, count, datatype, root, 0, communicator, MPI_STATUS_IGNORE);
+    MPI_Irecv(data, count, datatype, root, 0, communicator, &request);
 	}
+	MPI_Wait(&request, &status);
 }
 	
 
@@ -99,14 +102,16 @@ void MY_bcast_binomialTree(void* data, int count, MPI_Datatype datatype, int roo
 	int rank, size;
 	MPI_Comm_rank(communicator, &rank);
 	MPI_Comm_size(communicator, &size);
+	MPI_Status status;
+    MPI_Request request = MPI_REQUEST_NULL;
 	// broadcast through binomial tree 
 	// implemented by bisection method
 	if (root != 0){
 		if (rank == root){
-			MPI_Send(data, count, datatype, 0, 0, communicator);
+			MPI_Isend(data, count, datatype, 0, 0, communicator, &request);
 		}
 		if (rank == 0){
-				MPI_Recv(data, count, datatype, root, 0, communicator, MPI_STATUS_IGNORE);
+				MPI_Irecv(data, count, datatype, root, 0, communicator, &request);
 			}
 	}
 	int left = 0;
@@ -118,16 +123,17 @@ void MY_bcast_binomialTree(void* data, int count, MPI_Datatype datatype, int roo
 		int mid = (left + right +1)/2;
 		if (rank >= left && rank < mid){
 			if (rank == left){
-				MPI_Send(data, count, datatype, mid, 0, communicator);
+				MPI_Isend(data, count, datatype, mid, 0, communicator, &request);
 			}
 			right = mid -1;
 		}
 		else{
 			if (rank == mid){
-				MPI_Recv(data, count, datatype, left, 0, communicator, MPI_STATUS_IGNORE);
+				MPI_Irecv(data, count, datatype, left, 0, communicator, &request);
 			}
 			left = mid;
 	
 	  }
 	}
+	MPI_Wait(&request, &status);
 }

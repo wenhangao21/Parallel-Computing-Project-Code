@@ -1,11 +1,11 @@
 #!/bin/bash
 #
 #SBATCH --job-name=wenhan_project2
-#SBATCH --output=p1_output.txt
-#SBATCH --ntasks-per-node=7
+#SBATCH --output=p2_output.txt
+#SBATCH --ntasks-per-node=28
 #SBATCH --nodes=1
-#SBATCH --time=00:30
-#SBATCH -p long-96core
+#SBATCH --time=00:15
+#SBATCH -p short-28core
 
 # request more time for large scale
 
@@ -18,6 +18,6 @@ export MV2_HOMOGENEOUS_CLUSTER=1
 export MV2_ENABLE_AFFINITY=0
 
 # compile the code
-mpicc p1_main.c -o p1_main
+mpicc p2_main.c -o p2_main
 
-mpirun ./p1_main
+mpirun ./p2_main
